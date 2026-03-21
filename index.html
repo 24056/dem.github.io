@@ -92,4 +92,147 @@ clogs: 0.15%
     0.69
     
         </p>
+     <p>21 03 2026</p>
+    import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import joblib
+import os
+
+
+print("=" * 60)
+print("🚗 ГЕНЕРАЦИЯ ДАТАСЕТА КАСКО")
+print("=" * 60)
+
+np.random.seed(42)
+n_samples = 1000
+
+# Входные данные
+age = np.random.randint(18, 70, n_samples)
+driving_experience = np.random.randint(0, 40, n_samples)
+driving_experience = np.minimum(driving_experience, np.maximum(0, age - 18))
+accidents = np.random.poisson(lam=1.5, size=n_samples)
+
+# Логика принятия решения (целевая переменная)
+casco_approved = np.ones(n_samples, dtype=int)
+for i in range(n_samples):
+    risk_score = 0
+    if age[i] < 23:
+        risk_score += 2
+    if driving_experience[i] < 3:
+        risk_score += 1
+    if accidents[i] > 0:
+        risk_score += accidents[i] * 2
+    
+    if risk_score > 4:
+        casco_approved[i] = 0 if np.random.random() > 0.1 else 1
+    else:
+        casco_approved[i] = 1 if np.random.random() > 0.1 else 0
+
+
+df = pd.DataFrame({
+    'age': age,
+    'driving_experience': driving_experience,
+    'accidents': accidents,
+    'casco_approved': casco_approved
+})
+
+
+os.makedirs('Downloads', exist_ok=True)
+df.to_csv('Downloads/casco_dataset.csv', index=False)
+print(f"✅ Датасет сохранён: Downloads/casco_dataset.csv")
+print(f"📊 Строк: {len(df)}, Колонок: {len(df.columns)}")
+
+
+print("\n" + "=" * 60)
+print("📋 ПРЕОБРАЗОВАНИЕ ДАННЫХ")
+print("=" * 60)
+
+print("\nДо кодирования:")
+print(df.head(10))
+
+# One-Hot Encoding (если будут текстовые колонки)
+df_encoded = pd.get_dummies(df, columns=['age'], drop_first=False)
+df_encoded = df  # В данном случае все колонки числовые
+
+print("\nПосле кодирования:")
+print(df_encoded.head(10))
+
+
+x = df_encoded.drop('casco_approved', axis=1)
+y = df_encoded['casco_approved']
+
+print(f"\n📈 Признаки (X): {x.columns.tolist()}")
+print(f"🎯 Цель (Y): casco_approved")
+
+
+X_train, X_test, y_train, y_test = train_test_split(
+    x,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+print(f"\n📚 Обучающая выборка: {len(X_train)} записей")
+print(f"🧪 Тестовая выборка: {len(X_test)} записей")
+
+print("\n" + "=" * 60)
+print("🌳 ОБУЧЕНИЕ ДЕРЕВА РЕШЕНИЙ")
+print("=" * 60)
+
+tree = DecisionTreeClassifier(max_depth=5, random_state=42)
+tree.fit(X_train, y_train)
+
+
+y_pred = tree.predict(X_test)
+
+metrics = {
+    'accuracy': accuracy_score(y_test, y_pred),
+    'precision': precision_score(y_test, y_pred),
+    'recall': recall_score(y_test, y_pred),
+    'f1': f1_score(y_test, y_pred)
+}
+
+print(f"\n✅ Accuracy (Точность):  {metrics['accuracy']:.4f} ({metrics['accuracy']*100:.2f}%)")
+print(f"✅ Precision (Прецизионность): {metrics['precision']:.4f}")
+print(f"✅ Recall (Полнота):    {metrics['recall']:.4f}")
+print(f"✅ F1-Score:            {metrics['f1']:.4f}")
+
+# Простая точность для сайта
+simple_accuracy = tree.score(X_test, y_test)
+print(f"\n🎯 score() точность: {simple_accuracy:.4f} ({simple_accuracy*100:.2f}%)")
+
+
+joblib.dump(tree, 'casco_model.pkl')
+joblib.dump(metrics, 'casco_metrics.pkl')
+joblib.dump(x.columns.tolist(), 'feature_names.pkl')
+
+print("\n💾 Модель сохранена: casco_model.pkl")
+print("💾 Метрики сохранены: casco_metrics.pkl")
+print("💾 Имена признаков: feature_names.pkl")
+
+
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(20, 10))
+plot_tree(
+    tree,
+    feature_names=x.columns,
+    class_names=['Отказ', 'Одобрено'],
+    filled=True,
+    rounded=True,
+    fontsize=10
+)
+plt.title("Дерево решений - КАСКО")
+plt.savefig('casco_tree.png', dpi=150, bbox_inches='tight')
+print("\n📊 Визуализация сохранена: casco_tree.png")
+plt.show()
+
+print("\n" + "=" * 60)
+print("✅ ОБУЧЕНИЕ ЗАВЕРШЕНО! Запустите app.py для веб-сайта")
+print("=" * 60)
+    </body>
 </html>
