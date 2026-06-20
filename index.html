@@ -27,7 +27,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 25px;
-            padding: 40px;
+            padding: 30px;
             box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
             max-width: 1200px;
             width: 100%;
@@ -42,8 +42,8 @@
         h1 {
             text-align: center;
             color: #2d3748;
-            margin-bottom: 35px;
-            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-size: 2.2em;
             font-weight: 700;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
@@ -66,7 +66,7 @@
 
         .crossword-wrapper {
             display: flex;
-            gap: 40px;
+            gap: 30px;
             flex-wrap: wrap;
             justify-content: center;
             align-items: flex-start;
@@ -75,25 +75,25 @@
         .grid-container {
             position: relative;
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .crossword-grid {
             display: grid;
-            grid-template-columns: repeat(15, 45px);
-            grid-template-rows: repeat(15, 45px);
-            gap: 3px;
+            grid-template-columns: repeat(15, 40px);
+            grid-template-rows: repeat(15, 40px);
+            gap: 2px;
             background: #e2e8f0;
-            padding: 3px;
+            padding: 2px;
             border-radius: 12px;
         }
 
         .cell-wrapper {
             position: relative;
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
         }
 
         .cell {
@@ -102,14 +102,16 @@
             background: white;
             border: 2px solid #cbd5e0;
             text-align: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             outline: none;
             color: #2d3748;
             border-radius: 6px;
+            padding: 0;
+            margin: 0;
         }
 
         .cell.blocked {
@@ -121,8 +123,7 @@
         .cell:not(.blocked):hover {
             background: #e6fffa;
             border-color: #667eea;
-            transform: scale(1.08);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
             z-index: 10;
         }
 
@@ -130,7 +131,6 @@
             background: #fef3c7;
             border-color: #f59e0b;
             box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
-            transform: scale(1.05);
         }
 
         .cell.correct {
@@ -154,22 +154,23 @@
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
         }
 
         .cell-number {
             position: absolute;
-            top: 3px;
-            left: 4px;
-            font-size: 11px;
+            top: 2px;
+            left: 2px;
+            font-size: 10px;
             color: #667eea;
             font-weight: 700;
             pointer-events: none;
             z-index: 5;
             background: rgba(255, 255, 255, 0.9);
-            padding: 1px 3px;
-            border-radius: 3px;
+            padding: 1px 2px;
+            border-radius: 2px;
+            line-height: 1;
         }
 
         .questions {
@@ -179,19 +180,13 @@
         }
 
         .question-section {
-            margin-bottom: 30px;
-            animation: slideIn 0.6s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+            margin-bottom: 25px;
         }
 
         .question-section h3 {
             color: #667eea;
-            margin-bottom: 18px;
-            font-size: 1.4em;
+            margin-bottom: 15px;
+            font-size: 1.3em;
             font-weight: 600;
             border-bottom: 3px solid #667eea;
             padding-bottom: 8px;
@@ -206,8 +201,8 @@
         }
 
         .question-item {
-            margin-bottom: 14px;
-            padding: 15px;
+            margin-bottom: 12px;
+            padding: 12px;
             background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
             border-radius: 10px;
             transition: all 0.3s ease;
@@ -217,24 +212,9 @@
             overflow: hidden;
         }
 
-        .question-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
-            transition: width 0.3s ease;
-        }
-
-        .question-item:hover::before {
-            width: 100%;
-        }
-
         .question-item:hover {
             background: linear-gradient(135deg, #e6fffa 0%, #d1fae5 100%);
-            transform: translateX(8px);
+            transform: translateX(5px);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
         }
 
@@ -247,42 +227,22 @@
 
         .buttons {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
-            margin-top: 35px;
+            margin-top: 30px;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 14px 35px;
+            padding: 12px 30px;
             font-size: 16px;
             border: none;
-            border-radius: 30px;
+            border-radius: 25px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s ease;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        button:active::before {
-            width: 300px;
-            height: 300px;
         }
 
         .check-btn {
@@ -292,7 +252,7 @@
         }
 
         .check-btn:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
@@ -303,17 +263,17 @@
         }
 
         .clear-btn:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
         }
 
         .result-message {
             text-align: center;
-            margin-top: 25px;
-            font-size: 1.3em;
+            margin-top: 20px;
+            font-size: 1.2em;
             font-weight: 600;
-            min-height: 35px;
-            padding: 15px;
+            min-height: 30px;
+            padding: 10px;
             border-radius: 10px;
             transition: all 0.3s ease;
         }
@@ -321,12 +281,6 @@
         .success {
             color: #065f46;
             background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            animation: successBounce 0.6s ease;
-        }
-
-        @keyframes successBounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
         }
 
         .error {
@@ -344,7 +298,7 @@
             height: 8px;
             background: #e2e8f0;
             border-radius: 4px;
-            margin-top: 20px;
+            margin-top: 15px;
             overflow: hidden;
         }
 
@@ -357,16 +311,16 @@
         }
 
         @media (max-width: 768px) {
-            .container { padding: 25px; }
+            .container { padding: 20px; }
             .crossword-grid {
-                grid-template-columns: repeat(15, 35px);
-                grid-template-rows: repeat(15, 35px);
+                grid-template-columns: repeat(15, 32px);
+                grid-template-rows: repeat(15, 32px);
             }
-            .cell-wrapper { width: 35px; height: 35px; }
-            .cell { font-size: 16px; }
-            .cell-number { font-size: 9px; }
-            h1 { font-size: 1.8em; }
-            .crossword-wrapper { gap: 25px; }
+            .cell-wrapper { width: 32px; height: 32px; }
+            .cell { font-size: 14px; }
+            .cell-number { font-size: 8px; }
+            h1 { font-size: 1.6em; }
+            .crossword-wrapper { gap: 20px; }
             .questions { min-width: 100%; }
         }
     </style>
@@ -470,13 +424,22 @@
                     let r = row;
                     let c = col;
                     
-                    if (direction === 'across') c += i;
-                    else r += i;
+                    if (direction === 'across') {
+                        c += i;
+                    } else {
+                        r += i;
+                    }
                     
                     if (r < gridSize && c < gridSize) {
+                        // Проверяем, не занята ли уже клетка другой буквой
+                        if (grid[r][c] !== null && grid[r][c] !== word[i]) {
+                            console.warn(`Конфликт в клетке [${r},${c}]: ${grid[r][c]} vs ${word[i]}`);
+                        }
+                        
                         grid[r][c] = word[i];
                         wordCells[number].push(`${r}-${c}`);
                         
+                        // Добавляем номер только для первой буквы слова
                         if (i === 0) {
                             cellNumbers[`${r}-${c}`] = number;
                         }
@@ -507,6 +470,7 @@
                         cell.addEventListener('keydown', handleKeydown);
                         cell.addEventListener('focus', () => highlightCell(cell));
                         
+                        // Добавляем номер вопроса если есть
                         if (cellNumbers[`${row}-${col}`]) {
                             const numberSpan = document.createElement('span');
                             numberSpan.className = 'cell-number';
@@ -524,78 +488,119 @@
             }
         }
 
+        // Обработка ввода
         function handleInput(e) {
             const cell = e.target;
             const value = cell.value.toUpperCase();
             cell.value = value;
+            
             updateProgress();
-            if (value) moveToNextCell(cell);
+            
+            // Автоматический переход к следующей клетке
+            if (value) {
+                moveToNextCell(cell);
+            }
         }
 
+        // Обработка клавиш
         function handleKeydown(e) {
             const cell = e.target;
             const row = parseInt(cell.dataset.row);
             const col = parseInt(cell.dataset.col);
             
             switch(e.key) {
-                case 'ArrowRight': e.preventDefault(); moveFocus(row, col + 1); break;
-                case 'ArrowLeft': e.preventDefault(); moveFocus(row, col - 1); break;
-                case 'ArrowDown': e.preventDefault(); moveFocus(row + 1, col); break;
-                case 'ArrowUp': e.preventDefault(); moveFocus(row - 1, col); break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    moveFocus(row, col + 1);
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    moveFocus(row, col - 1);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    moveFocus(row + 1, col);
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    moveFocus(row - 1, col);
+                    break;
                 case 'Backspace':
-                    if (!cell.value) moveToPreviousCell(cell);
+                    if (!cell.value) {
+                        moveToPreviousCell(cell);
+                    }
                     break;
             }
         }
 
+        // Перемещение фокуса
         function moveFocus(row, col) {
             if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
                 const nextCell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
                 if (nextCell && !nextCell.classList.contains('blocked')) {
                     nextCell.focus();
+                    nextCell.select();
                 }
             }
         }
 
+        // Переход к следующей клетке
         function moveToNextCell(currentCell) {
             const row = parseInt(currentCell.dataset.row);
             const col = parseInt(currentCell.dataset.col);
+            
+            // Пробуем двигаться по горизонтали сначала
             moveFocus(row, col + 1);
         }
 
+        // Переход к предыдущей клетке
         function moveToPreviousCell(currentCell) {
             const row = parseInt(currentCell.dataset.row);
             const col = parseInt(currentCell.dataset.col);
+            
             moveFocus(row, col - 1);
         }
 
+        // Подсветка активной клетки
         function highlightCell(cell) {
             document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
             cell.classList.add('active');
         }
 
+        // Подсветка слова при клике на вопрос
         function highlightWord(number) {
             document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+            
             if (wordCells[number]) {
                 wordCells[number].forEach(pos => {
                     const [row, col] = pos.split('-');
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    if (cell) cell.classList.add('active');
+                    if (cell) {
+                        cell.classList.add('active');
+                    }
                 });
+                
+                // Фокус на первую букву
                 const firstPos = wordCells[number][0];
                 const [row, col] = firstPos.split('-');
                 const firstCell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                if (firstCell) firstCell.focus();
+                if (firstCell) {
+                    firstCell.focus();
+                    firstCell.select();
+                }
             }
         }
 
+        // Обновление прогресса
         function updateProgress() {
             const totalCells = document.querySelectorAll('.cell:not(.blocked)').length;
             const filledCells = document.querySelectorAll('.cell:not(.blocked):not([value=""])').length;
-            const percentage = (filledCells / totalCells) * 100;
+            const percentage = totalCells > 0 ? (filledCells / totalCells) * 100 : 0;
+            
             document.getElementById('progressFill').style.width = percentage + '%';
         }
 
+        // Проверка ответов
         function checkAnswers() {
             let correct = 0;
             let total = 0;
@@ -634,6 +639,7 @@
             }
         }
 
+        // Эффект празднования успеха
         function celebrateSuccess() {
             const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#10b981'];
             for (let i = 0; i < 50; i++) {
@@ -643,6 +649,7 @@
             }
         }
 
+        // Создание конфетти
         function createConfetti(color) {
             const confetti = document.createElement('div');
             confetti.style.position = 'fixed';
@@ -667,6 +674,7 @@
             animation.onfinish = () => confetti.remove();
         }
 
+        // Очистка сетки
         function clearGrid() {
             document.querySelectorAll('.cell:not(.blocked)').forEach(cell => {
                 cell.value = '';
@@ -676,6 +684,7 @@
             document.getElementById('progressFill').style.width = '0%';
         }
 
+        // Инициализация при загрузке
         window.onload = function() {
             initGrid();
             createGrid();
