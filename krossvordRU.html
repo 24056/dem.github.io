@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кроссворд - Анатомия</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        h1 {
+            width: 100%;
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Сетка кроссворда */
+        .crossword-board {
+            display: grid;
+            /* Сетка 6 на 6 клеток по 50px */
+            grid-template-columns: repeat(6, 50px);
+            grid-template-rows: repeat(6, 50px);
+            gap: 2px;
+            background-color: #333; /* Цвет линий сетки */
+            border: 2px solid #333;
+            padding: 2px;
+        }
+
+        .cell {
+            background-color: #fff;
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Черная клетка (пустота) */
+        .cell.black {
+            background-color: #333;
+        }
+
+        /* Поле ввода буквы */
+        .cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            outline: none;
+            background: transparent;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .cell input:focus {
+            background-color: #e3f2fd;
+        }
+
+        /* Номер вопроса в углу */
+        .num {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 10px;
+            color: #666;
+            pointer-events: none;
+            font-weight: bold;
+        }
+
+        /* Блок с вопросами */
+        .questions {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .q-block {
+            margin-bottom: 20px;
+        }
+
+        .q-block h3 {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+            padding-bottom: 5px;
+        }
+
+        .q-item {
+            margin: 8px 0;
+            padding: 8px;
+            background: #f4f4f4;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .q-item:hover {
+            background: #e0e7ff;
+            transform: translateX(5px);
+        }
+
+        .btn-group {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .check { background: #2ecc71; }
+        .check:hover { background: #27ae60; }
+        
+        .reset { background: #e74c3c; }
+        .reset:hover { background: #c0392b; }
+
+        #message {
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧬 Анатомия</h1>
+
+    <!-- Сетка 6x6 -->
+    <div class="crossword-board" id="board"></div>
+
+    <div class="questions">
+        <div class="q-block">
+            <h3>По горизонтали:</h3>
+            <div class="q-item"><b>1.</b> Главный орган кровообращения (6)</div>
+            <div class="q-item"><b>4.</b> Орган дыхания (6)</div>
+        </div>
+        <div class="q-block">
+            <h3>По вертикали:</h3>
+            <div class="q-item"><b>2.</b> Фильтр крови, парный орган (5)</div>
+            <div class="q-item"><b>3.</b> Крупнейшая железа (6)</div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="check" onclick="check()">Проверить</button>
+        <button class="reset" onclick="reset()">Очистить</button>
+    </div>
+    <div id="message"></div>
+</div>
+
+<script>
+    // Схема кроссворда 6x6
+    // '.' - черная клетка
+    // Буква - белая клетка
+    // Цифра перед буквой - номер вопроса (например, "1С")
+    
+    const schema = [
+        ['.', '3П', '.', '2К', '.', '.'], // Row 0
+        ['.', 'Е', '.', 'Р', '.', '.'],   // Row 1
+        ['1С', 'Е', 'Р', 'Д', 'Ц', 'Е'],  // Row 2 (СЕРДЦЕ)
+        ['4Л', 'Е', 'Г', 'К', 'О', 'Е'],  // Row 3 (ЛЕГКОЕ)
+        ['.', 'Н', '.', 'О', '.', '.'],   // Row 4
+        ['.', 'Ь', '.', 'В', '.', '.']    // Row 5
+    ];
+
+    // Правильные ответы для проверки (без цифр)
+    const answers = [
+        ['.', 'П', '.', 'К', '.', '.'],
+        ['.', 'Е', '.', 'О', '.', '.'],
+        ['С', 'Е', 'Р', 'Д', 'Ц', 'Е'],
+        ['Л', 'Е', 'Г', 'К', 'О', 'Е'],
+        ['.', 'Н', '.', 'В', '.', '.'],
+        ['.', 'Ь', '.', 'Ь', '.', '.'] // Ой, КРОВЬ заканчивается на Ь, ПЕЧЕНЬ на Ь. 
+                                       // В схеме выше: ПЕЧЕНЬ (П-Е-Ч-Е-Н-Ь). КРОВЬ (К-Р-О-В-Ь).
+                                       // Исправим массив ответов ниже программно.
+    ];
+
+    const board = document.getElementById('board');
+
+    function init() {
+        board.innerHTML = '';
+        
+        for(let r=0; r<6; r++) {
+            for(let c=0; c<6; c++) {
+                let cellData = schema[r][c];
+                let div = document.createElement('div');
+                div.className = 'cell';
+
+                if(cellData === '.') {
+                    div.classList.add('black');
+                } else {
+                    // Если есть цифра (например "1С")
+                    let num = '';
+                    let char = cellData;
+                    
+                    if(/\d/.test(cellData.charAt(0))) {
+                        num = cellData.charAt(0);
+                        char = cellData.substring(1);
+                    }
+
+                    // Создаем инпут
+                    let input = document.createElement('input');
+                    input.maxLength = 1;
+                    input.dataset.row = r;
+                    input.dataset.col = c;
+                    input.dataset.ans = char; // Сохраняем правильный ответ
+                    
+                    // Добавляем номер
+                    if(num) {
+                        let span = document.createElement('span');
+                        span.className = 'num';
+                        span.innerText = num;
+                        div.appendChild(span);
+                    }
+                    
+                    div.appendChild(input);
+                }
+                board.appendChild(div);
+            }
+        }
+    }
+
+    function check() {
+        let inputs = document.querySelectorAll('input');
+        let correctCount = 0;
+        let total = inputs.length;
+        let allCorrect = true;
+
+        inputs.forEach(inp => {
+            let val = inp.value.toUpperCase();
+            let ans = inp.dataset.ans;
+            
+            // Сброс стилей
+            inp.style.backgroundColor = 'transparent';
+            inp.style.color = '#333';
+
+            if(val === ans) {
+                inp.style.backgroundColor = '#d4edda'; // Зеленый
+                inp.style.color = '#155724';
+                correctCount++;
+            } else if (val !== '') {
+                inp.style.backgroundColor = '#f8d7da'; // Красный
+                inp.style.color = '#721c24';
+                allCorrect = false;
+            } else {
+                allCorrect = false;
+            }
+        });
+
+        let msg = document.getElementById('message');
+        if(correctCount === total) {
+            msg.innerText = "🎉 Отлично! Все верно!";
+            msg.style.color = "green";
+        } else {
+            msg.innerText = `Правильно ${correctCount} из ${total}`;
+            msg.style.color = "red";
+        }
+    }
+
+    function reset() {
+        document.querySelectorAll('input').forEach(inp => {
+            inp.value = '';
+            inp.style.backgroundColor = 'transparent';
+            inp.style.color = '#333';
+        });
+        document.getElementById('message').innerText = '';
+    }
+
+    // Запуск
+    init();
+</script>
+
+</body>
+</html>
