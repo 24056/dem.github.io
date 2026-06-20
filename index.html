@@ -1,280 +1,4 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Привет, мир!</title>
-</head>
-<body>
-    <p>16 02 2026</p>
-<p>16 02 2026</p>    
-    Вопрос пользователя: Сколько ждать мой заказ?
-Найден FAQ-вопрос: Как быстро доставляется заказ? (sim=0.706)
-Ответ бот-FAQ: Наш стандартный срок доставки — 3–5 рабочих дней.
-    
-    
-    
-    <p>16 02 2026 </p>
-    <p>Топ-3 предсказаний:</p>
-running shoe: 99.45%
-shoe store: 0.27%
-clogs: 0.15%
-    Нажмите, чтобы скачать или открыть презентаию:
-    <a href="1757322958.png">Фотография в формате .png</a>
-    Нажмите, чтобы скачать или открыть index.html:
-    <a href="index.html">Файл проверки работы с кириллицей .html</a>
-    </p>
-    
 
-    <p>16 02 2026</p>
-    
-    Вопрос пользователя: Сколько ждать мой заказ?
-Найден FAQ-вопрос: Как быстро доставляется заказ? (sim=0.706)
-Ответ бот-FAQ: Наш стандартный срок доставки — 3–5 рабочих дней.
-    <p>
-       <p>25 02 2026</p>
-        
-       9567 + 1085 = 10652 
-    Соответствие букв и цифр:
-  D = 7
-  E = 5
-  M = 1
-  N = 6
-  O = 0
-  R = 8
-  S = 9
-  Y = 2
-    </p>
-    <p>25 02 2026</p>
-    Задача: ВОЛК + ЛИСА = ЗВЕРИ
-
-  Решение #1:
-  {'С': 6, 'Е': 0, 'К': 3, 'Р': 5, 'Л': 9, 'О': 2, 'З': 1, 'И': 7, 'А': 4, 'В': 8}
-    8293
-  + 9764
-    --------
-    18057
-
---------------------------------------------------
-Задача: КТО + КОТ = ТОК
-
-  Решение #1:
-  {'О': 5, 'Т': 9, 'К': 4}
-    495
-  + 459
-    --------
-    954
-
---------------------------------------------------
-Задача: КОШКА + КОШКА + КОШКА = СОБАКА
-
-  Решение #1:
-  {'Ш': 3, 'К': 5, 'О': 6, 'А': 0, 'Б': 9, 'С': 1}
-    56350
-    56350
-  + 56350
-    --------
-    169050
-
---------------------------------------------------
-Задача: СИНУС + СИНУС + КОСИНУС = ТАНГЕНС
-
-  Решение #1:
-  {'Е': 1, 'К': 3, 'Н': 7, 'Г': 6, 'О': 9, 'И': 8, 'А': 0, 'Т': 4, 'С': 5, 'У': 2}
-    58725
-    58725
-  + 3958725
-    --------
-    4076175
-    </body>
-      <p>21 03 2026</p>
-    
-    0.69
-    
-        </p>
-     <p>21 03 2026</p>
-    import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-import joblib
-import os
-
-
-print("=" * 60)
-print("🚗 ГЕНЕРАЦИЯ ДАТАСЕТА КАСКО")
-print("=" * 60)
-
-np.random.seed(42)
-n_samples = 1000
-
-# Входные данные
-age = np.random.randint(18, 70, n_samples)
-driving_experience = np.random.randint(0, 40, n_samples)
-driving_experience = np.minimum(driving_experience, np.maximum(0, age - 18))
-accidents = np.random.poisson(lam=1.5, size=n_samples)
-
-# Логика принятия решения (целевая переменная)
-casco_approved = np.ones(n_samples, dtype=int)
-for i in range(n_samples):
-    risk_score = 0
-    if age[i] < 23:
-        risk_score += 2
-    if driving_experience[i] < 3:
-        risk_score += 1
-    if accidents[i] > 0:
-        risk_score += accidents[i] * 2
-    
-    if risk_score > 4:
-        casco_approved[i] = 0 if np.random.random() > 0.1 else 1
-    else:
-        casco_approved[i] = 1 if np.random.random() > 0.1 else 0
-
-
-df = pd.DataFrame({
-    'age': age,
-    'driving_experience': driving_experience,
-    'accidents': accidents,
-    'casco_approved': casco_approved
-})
-
-
-os.makedirs('Downloads', exist_ok=True)
-df.to_csv('Downloads/casco_dataset.csv', index=False)
-print(f"✅ Датасет сохранён: Downloads/casco_dataset.csv")
-print(f"📊 Строк: {len(df)}, Колонок: {len(df.columns)}")
-
-
-print("\n" + "=" * 60)
-print("📋 ПРЕОБРАЗОВАНИЕ ДАННЫХ")
-print("=" * 60)
-
-print("\nДо кодирования:")
-print(df.head(10))
-
-# One-Hot Encoding (если будут текстовые колонки)
-df_encoded = pd.get_dummies(df, columns=['age'], drop_first=False)
-df_encoded = df  # В данном случае все колонки числовые
-
-print("\nПосле кодирования:")
-print(df_encoded.head(10))
-
-
-x = df_encoded.drop('casco_approved', axis=1)
-y = df_encoded['casco_approved']
-
-print(f"\n📈 Признаки (X): {x.columns.tolist()}")
-print(f"🎯 Цель (Y): casco_approved")
-
-
-X_train, X_test, y_train, y_test = train_test_split(
-    x,
-    y,
-    test_size=0.2,
-    random_state=42
-)
-
-print(f"\n📚 Обучающая выборка: {len(X_train)} записей")
-print(f"🧪 Тестовая выборка: {len(X_test)} записей")
-
-print("\n" + "=" * 60)
-print("🌳 ОБУЧЕНИЕ ДЕРЕВА РЕШЕНИЙ")
-print("=" * 60)
-
-tree = DecisionTreeClassifier(max_depth=5, random_state=42)
-tree.fit(X_train, y_train)
-
-
-y_pred = tree.predict(X_test)
-
-metrics = {
-    'accuracy': accuracy_score(y_test, y_pred),
-    'precision': precision_score(y_test, y_pred),
-    'recall': recall_score(y_test, y_pred),
-    'f1': f1_score(y_test, y_pred)
-}
-
-print(f"\n✅ Accuracy (Точность):  {metrics['accuracy']:.4f} ({metrics['accuracy']*100:.2f}%)")
-print(f"✅ Precision (Прецизионность): {metrics['precision']:.4f}")
-print(f"✅ Recall (Полнота):    {metrics['recall']:.4f}")
-print(f"✅ F1-Score:            {metrics['f1']:.4f}")
-
-# Простая точность для сайта
-simple_accuracy = tree.score(X_test, y_test)
-print(f"\n🎯 score() точность: {simple_accuracy:.4f} ({simple_accuracy*100:.2f}%)")
-
-
-joblib.dump(tree, 'casco_model.pkl')
-joblib.dump(metrics, 'casco_metrics.pkl')
-joblib.dump(x.columns.tolist(), 'feature_names.pkl')
-
-print("\n💾 Модель сохранена: casco_model.pkl")
-print("💾 Метрики сохранены: casco_metrics.pkl")
-print("💾 Имена признаков: feature_names.pkl")
-
-
-from sklearn.tree import plot_tree
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(20, 10))
-plot_tree(
-    tree,
-    feature_names=x.columns,
-    class_names=['Отказ', 'Одобрено'],
-    filled=True,
-    rounded=True,
-    fontsize=10
-)
-plt.title("Дерево решений - КАСКО")
-plt.savefig('casco_tree.png', dpi=150, bbox_inches='tight')
-print("\n📊 Визуализация сохранена: casco_tree.png")
-plt.show()
-
-print("\n" + "=" * 60)
-print("✅ ОБУЧЕНИЕ ЗАВЕРШЕНО! Запустите app.py для веб-сайта")
-print("=" * 60)
-    </body>
-
-        
-    <p>23 02 2026</p>
-
-     Новый признак: reading score
-Всего признаков: 4 (gender, lunch, test prep, reading score)
-Целевая переменная: math score
-
-     MAE  (Средняя абсолютная ошибка): 4.7177
-MSE  (Среднеквадратичная ошибка): 38.6479
-RMSE (Корень из MSE):             6.2167
-R²   (Коэффициент детерминации):  0.8710
-          </p>
-        <a href="Таблица 1, Таблица 2, Таблица 3, Таблица 4</a>
-             <p>18 05 2026</p>
-            🤖 Игра: Компьютер угадывает ваше число
-----------------------------------------
-
-Введите нижнюю границу диапазона N:  92
-Введите верхнюю границу диапазона M:  190
-
-
-🔹 Загадайте число от 92 до 190.
-🔹 Отвечайте честно. Можно использовать: да/y/1 или нет/n/0
-----------------------------------------
-
-❓ Вопрос 1: Ваше число больше 141? (да/нет):  да
-❓ Вопрос 2: Ваше число больше 166? (да/нет):  да
-❓ Вопрос 3: Ваше число больше 178? (да/нет):  да
-❓ Вопрос 4: Ваше число больше 184? (да/нет):  да
-❓ Вопрос 5: Ваше число больше 187? (да/нет):  да
-❓ Вопрос 6: Ваше число больше 189? (да/нет):  нет
-❓ Вопрос 7: Ваше число больше 188? (да/нет):  да
-
-
-========================================
-✅ Я угадал! Ваше число: 189
-📊 Использовано вопросов: 7
-📏 Теоретический минимум для этого диапазона: 1 (бинарный поиск)
-========================================
      </p>20.06.2026</p>
    <a href="krossvordRU.html">кроссворд Анатомия</a>
             <!DOCTYPE html>
@@ -776,8 +500,9 @@ R²   (Коэффициент детерминации):  0.8710
 </html>
              </p>
               </p> 20.06.2026</p>
-    <a href="krossvordFa.html">кроссворд Фармакологияы</a>
-<!DOCTYPE html>
+    <a href="krossvordFa.html">кроссворд Фармакология</a>
+
+html_code = '''<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -792,7 +517,7 @@ R²   (Коэффициент детерминации):  0.8710
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -801,195 +526,368 @@ R²   (Коэффициент детерминации):  0.8710
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            max-width: 1100px;
             width: 100%;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
             text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.2em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            color: #2d3748;
+            margin-bottom: 35px;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
         }
 
         .crossword-wrapper {
             display: flex;
-            gap: 30px;
+            gap: 40px;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: flex-start;
         }
 
         .grid-container {
             position: relative;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .crossword-grid {
             display: grid;
-            grid-template-columns: repeat(12, 45px);
-            grid-template-rows: repeat(12, 45px);
-            gap: 2px;
-            background: #2c3e50;
-            padding: 2px;
-            border-radius: 10px;
+            grid-template-columns: repeat(12, 48px);
+            grid-template-rows: repeat(12, 48px);
+            gap: 3px;
+            background: #e2e8f0;
+            padding: 3px;
+            border-radius: 12px;
+        }
+
+        .cell-wrapper {
+            position: relative;
+            width: 48px;
+            height: 48px;
         }
 
         .cell {
-            width: 45px;
-            height: 45px;
+            width: 100%;
+            height: 100%;
             background: white;
-            border: none;
+            border: 2px solid #cbd5e0;
             text-align: center;
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 22px;
+            font-weight: 700;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            color: #2d3748;
+            border-radius: 6px;
         }
 
         .cell.blocked {
-            background: #2c3e50;
+            background: #4a5568;
+            border-color: #4a5568;
             cursor: default;
         }
 
         .cell:not(.blocked):hover {
-            background: #d5f4e6;
-            transform: scale(1.05);
+            background: #e6fffa;
+            border-color: #667eea;
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            z-index: 10;
         }
 
         .cell.active {
-            background: #a8e6cf;
-            box-shadow: inset 0 0 0 3px #11998e;
+            background: #fef3c7;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+            transform: scale(1.05);
         }
 
         .cell.correct {
-            background: #90EE90 !important;
-            color: #006400;
+            background: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46;
+            animation: correctPulse 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .cell.incorrect {
-            background: #FFB6C1 !important;
-            color: #8B0000;
+            background: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .cell-number {
             position: absolute;
-            top: 2px;
-            left: 2px;
+            top: 3px;
+            left: 4px;
             font-size: 11px;
-            color: #555;
-            font-weight: normal;
+            color: #667eea;
+            font-weight: 700;
             pointer-events: none;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1px 3px;
+            border-radius: 3px;
         }
 
         .questions {
             flex: 1;
-            min-width: 280px;
-            max-width: 350px;
+            min-width: 300px;
+            max-width: 400px;
         }
 
         .question-section {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .question-section h3 {
-            color: #11998e;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-            border-bottom: 2px solid #11998e;
-            padding-bottom: 5px;
+            color: #667eea;
+            margin-bottom: 18px;
+            font-size: 1.4em;
+            font-weight: 600;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question-section h3::before {
+            content: '📝';
+            font-size: 1.2em;
         }
 
         .question-item {
-            margin-bottom: 12px;
-            padding: 12px;
-            background: #f0f9f4;
-            border-radius: 8px;
+            margin-bottom: 14px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 10px;
             transition: all 0.3s ease;
-            border-left: 4px solid #11998e;
+            border-left: 5px solid #667eea;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+            transition: width 0.3s ease;
+        }
+
+        .question-item:hover::before {
+            width: 100%;
         }
 
         .question-item:hover {
-            background: #d5f4e6;
-            transform: translateX(5px);
+            background: linear-gradient(135deg, #e6fffa 0%, #d1fae5 100%);
+            transform: translateX(8px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
         }
 
         .question-number {
-            font-weight: bold;
-            color: #11998e;
-            margin-right: 5px;
+            font-weight: 700;
+            color: #667eea;
+            margin-right: 8px;
+            font-size: 1.1em;
         }
 
         .buttons {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 35px;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 12px 30px;
+            padding: 14px 35px;
             font-size: 16px;
             border: none;
-            border-radius: 25px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:active::before {
+            width: 300px;
+            height: 300px;
         }
 
         .check-btn {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
         .check-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
         .clear-btn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
         }
 
         .clear-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(238, 90, 111, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
         }
 
         .result-message {
             text-align: center;
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
-            min-height: 30px;
+            margin-top: 25px;
+            font-size: 1.3em;
+            font-weight: 600;
+            min-height: 35px;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
         }
 
         .success {
-            color: #006400;
+            color: #065f46;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            animation: successBounce 0.6s ease;
+        }
+
+        @keyframes successBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .error {
-            color: #8B0000;
+            color: #991b1b;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        }
+
+        .info {
+            color: #1e40af;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
         }
 
         @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
             .crossword-grid {
-                grid-template-columns: repeat(12, 35px);
-                grid-template-rows: repeat(12, 35px);
+                grid-template-columns: repeat(12, 38px);
+                grid-template-rows: repeat(12, 38px);
+            }
+
+            .cell-wrapper {
+                width: 38px;
+                height: 38px;
             }
 
             .cell {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
+                font-size: 18px;
             }
 
             .cell-number {
@@ -997,7 +895,15 @@ R²   (Коэффициент детерминации):  0.8710
             }
 
             h1 {
-                font-size: 1.6em;
+                font-size: 1.8em;
+            }
+
+            .crossword-wrapper {
+                gap: 25px;
+            }
+
+            .questions {
+                min-width: 100%;
             }
         }
     </style>
@@ -1014,27 +920,31 @@ R²   (Коэффициент детерминации):  0.8710
             <div class="questions">
                 <div class="question-section">
                     <h3>По горизонтали:</h3>
-                    <div class="question-item">
+                    <div class="question-item" onclick="highlightWord(1)">
                         <span class="question-number">1.</span> Вещество для лечения болезней (8 букв)
                     </div>
-                    <div class="question-item">
-                        <span class="question-number">3.</span> Нежелательное действие лекарства (10 букв)
+                    <div class="question-item" onclick="highlightWord(3)">
+                        <span class="question-number">3.</span> Нежелательное действие лекарства (8 букв)
                     </div>
                 </div>
                 
                 <div class="question-section">
                     <h3>По вертикали:</h3>
-                    <div class="question-item">
+                    <div class="question-item" onclick="highlightWord(2)">
                         <span class="question-number">2.</span> Наука о действии лекарств (12 букв)
                     </div>
-                    <div class="question-item">
+                    <div class="question-item" onclick="highlightWord(4)">
                         <span class="question-number">4.</span> Количество лекарства за один прием (4 буквы)
                     </div>
-                    <div class="question-item">
-                        <span class="question-number">5.</span> Лекарственная форма в виде таблетки (7 букв)
+                    <div class="question-item" onclick="highlightWord(5)">
+                        <span class="question-number">5.</span> Лекарственная форма в виде таблетки (8 букв)
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
         </div>
         
         <div class="buttons">
@@ -1050,18 +960,6 @@ R²   (Коэффициент детерминации):  0.8710
         const words = [
             // По горизонтали
             { word: 'ПРЕПАРАТ', direction: 'across', row: 3, col: 2, number: 1 },
-            { word: 'ПОБОЧНЫЙЭФФЕКТ', direction: 'across', row: 8, col: 1, number: 3 },
-            
-            // По вертикали
-            { word: 'ФАРМАКОЛОГИЯ', direction: 'down', row: 1, col: 5, number: 2 },
-            { word: 'ДОЗА', direction: 'down', row: 3, col: 9, number: 4 },
-            { word: 'ТАБЛЕТКА', direction: 'down', row: 2, col: 11, number: 5 }
-        ];
-
-        // Исправляем слова для корректного отображения
-        const correctedWords = [
-            // По горизонтали
-            { word: 'ПРЕПАРАТ', direction: 'across', row: 3, col: 2, number: 1 },
             { word: 'ПОБОЧНЫЙ', direction: 'across', row: 8, col: 1, number: 3 },
             
             // По вертикали
@@ -1073,14 +971,18 @@ R²   (Коэффициент детерминации):  0.8710
         const gridSize = 12;
         let grid = [];
         let cellNumbers = {};
+        let wordCells = {};
 
         // Инициализация сетки
         function initGrid() {
             grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
+            cellNumbers = {};
+            wordCells = {};
             
             // Заполняем сетку словами
-            correctedWords.forEach(wordObj => {
-                const { word, direction, row, col } = wordObj;
+            words.forEach(wordObj => {
+                const { word, direction, row, col, number } = wordObj;
+                wordCells[number] = [];
                 
                 for (let i = 0; i < word.length; i++) {
                     let r = row;
@@ -1094,10 +996,11 @@ R²   (Коэффициент детерминации):  0.8710
                     
                     if (r < gridSize && c < gridSize) {
                         grid[r][c] = word[i];
+                        wordCells[number].push(`${r}-${c}`);
                         
                         // Добавляем номер только для первой буквы слова
                         if (i === 0) {
-                            cellNumbers[`${r}-${c}`] = wordObj.number;
+                            cellNumbers[`${r}-${c}`] = number;
                         }
                     }
                 }
@@ -1111,6 +1014,9 @@ R²   (Коэффициент детерминации):  0.8710
             
             for (let row = 0; row < gridSize; row++) {
                 for (let col = 0; col < gridSize; col++) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'cell-wrapper';
+                    
                     const cell = document.createElement('input');
                     cell.type = 'text';
                     cell.className = 'cell';
@@ -1128,14 +1034,15 @@ R²   (Коэффициент детерминации):  0.8710
                             const numberSpan = document.createElement('span');
                             numberSpan.className = 'cell-number';
                             numberSpan.textContent = cellNumbers[`${row}-${col}`];
-                            cell.appendChild(numberSpan);
+                            wrapper.appendChild(numberSpan);
                         }
                     } else {
                         cell.classList.add('blocked');
                         cell.disabled = true;
                     }
                     
-                    gridElement.appendChild(cell);
+                    wrapper.appendChild(cell);
+                    gridElement.appendChild(wrapper);
                 }
             }
         }
@@ -1145,6 +1052,8 @@ R²   (Коэффициент детерминации):  0.8710
             const cell = e.target;
             const value = cell.value.toUpperCase();
             cell.value = value;
+            
+            updateProgress();
             
             // Автоматический переход к следующей клетке
             if (value) {
@@ -1160,15 +1069,19 @@ R²   (Коэффициент детерминации):  0.8710
             
             switch(e.key) {
                 case 'ArrowRight':
+                    e.preventDefault();
                     moveFocus(row, col + 1);
                     break;
                 case 'ArrowLeft':
+                    e.preventDefault();
                     moveFocus(row, col - 1);
                     break;
                 case 'ArrowDown':
+                    e.preventDefault();
                     moveFocus(row + 1, col);
                     break;
                 case 'ArrowUp':
+                    e.preventDefault();
                     moveFocus(row - 1, col);
                     break;
                 case 'Backspace':
@@ -1212,6 +1125,38 @@ R²   (Коэффициент детерминации):  0.8710
             cell.classList.add('active');
         }
 
+        // Подсветка слова при клике на вопрос
+        function highlightWord(number) {
+            document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+            
+            if (wordCells[number]) {
+                wordCells[number].forEach(pos => {
+                    const [row, col] = pos.split('-');
+                    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                    if (cell) {
+                        cell.classList.add('active');
+                    }
+                });
+                
+                // Фокус на первую букву
+                const firstPos = wordCells[number][0];
+                const [row, col] = firstPos.split('-');
+                const firstCell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                if (firstCell) {
+                    firstCell.focus();
+                }
+            }
+        }
+
+        // Обновление прогресса
+        function updateProgress() {
+            const totalCells = document.querySelectorAll('.cell:not(.blocked)').length;
+            const filledCells = document.querySelectorAll('.cell:not(.blocked):not([value=""])').length;
+            const percentage = (filledCells / totalCells) * 100;
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+        }
+
         // Проверка ответов
         function checkAnswers() {
             let correct = 0;
@@ -1238,15 +1183,52 @@ R²   (Коэффициент детерминации):  0.8710
             
             const resultMessage = document.getElementById('resultMessage');
             if (total === 0) {
-                resultMessage.textContent = 'Введите хотя бы одну букву!';
-                resultMessage.className = 'result-message error';
+                resultMessage.textContent = '⚠️ Введите хотя бы одну букву!';
+                resultMessage.className = 'result-message info';
             } else if (correct === total && total > 0) {
-                resultMessage.textContent = `🎉 Отлично! Все ${correct} ответов правильные!`;
+                resultMessage.textContent = `🎉 Отлично! Все ${correct} ответов правильные! Вы настоящий эксперт!`;
                 resultMessage.className = 'result-message success';
+                celebrateSuccess();
             } else {
-                resultMessage.textContent = `Правильно: ${correct} из ${total}. Попробуйте еще!`;
+                const percentage = Math.round((correct / total) * 100);
+                resultMessage.textContent = `✓ Правильно: ${correct} из ${total} (${percentage}%)`;
                 resultMessage.className = 'result-message error';
             }
+        }
+
+        // Эффект празднования успеха
+        function celebrateSuccess() {
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#10b981'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    createConfetti(colors[Math.floor(Math.random() * colors.length)]);
+                }, i * 30);
+            }
+        }
+
+        // Создание конфетти
+        function createConfetti(color) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = color;
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-10px';
+            confetti.style.borderRadius = '50%';
+            confetti.style.pointerEvents = 'none';
+            confetti.style.zIndex = '9999';
+            document.body.appendChild(confetti);
+            
+            const animation = confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: 2000 + Math.random() * 1000,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            });
+            
+            animation.onfinish = () => confetti.remove();
         }
 
         // Очистка сетки
@@ -1256,14 +1238,16 @@ R²   (Коэффициент детерминации):  0.8710
                 cell.classList.remove('correct', 'incorrect', 'active');
             });
             document.getElementById('resultMessage').textContent = '';
+            document.getElementById('progressFill').style.width = '0%';
         }
 
         // Инициализация при загрузке
         window.onload = function() {
             initGrid();
             createGrid();
+            updateProgress();
         };
     </script>
 </body>
-</html>
+</html>'''
 
