@@ -1,1467 +1,442 @@
-
-     </p>20.06.2026</p>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кроссворд - Анатомия</title>
+    <title>Медицинские Кроссворды</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #00f2fe;
+            --bg: #f3f4f6;
+            --text: #2d3748;
+            --white: #ffffff;
         }
 
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            max-width: 900px;
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+            padding-bottom: 50px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
         h1 {
-            width: 100%;
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
 
-        /* Сетка кроссворда */
-        .crossword-board {
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            background: white;
+            color: var(--text);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .crossword-section {
+            display: none;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .crossword-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Grid Layout for Crossword */
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+        }
+
+        .grid-wrapper {
+            background: #2d3748;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .cw-grid {
             display: grid;
-            /* Сетка 6 на 6 клеток по 50px */
-            grid-template-columns: repeat(6, 50px);
-            grid-template-rows: repeat(6, 50px);
             gap: 2px;
-            background-color: #333; /* Цвет линий сетки */
-            border: 2px solid #333;
-            padding: 2px;
+            background: #2d3748;
         }
 
         .cell {
-            background-color: #fff;
+            width: 40px;
+            height: 40px;
+            background: white;
             position: relative;
-            width: 50px;
-            height: 50px;
         }
 
-        /* Черная клетка (пустота) */
-        .cell.black {
-            background-color: #333;
-        }
+        .cell.black { background: #2d3748; }
 
-        /* Поле ввода буквы */
         .cell input {
             width: 100%;
             height: 100%;
             border: none;
             text-align: center;
-            font-size: 24px;
+            font-size: 18px;
             font-weight: bold;
             text-transform: uppercase;
             outline: none;
             background: transparent;
-            color: #333;
-            cursor: pointer;
+            color: #2d3748;
         }
 
-        .cell input:focus {
-            background-color: #e3f2fd;
-        }
+        .cell input:focus { background: #e6fffa; }
+        .cell input.correct { background: #c6f6d5; color: #22543d; }
+        .cell input.incorrect { background: #fed7d7; color: #822727; }
 
-        /* Номер вопроса в углу */
         .num {
             position: absolute;
             top: 2px;
             left: 2px;
-            font-size: 10px;
-            color: #666;
-            pointer-events: none;
-            font-weight: bold;
-        }
-
-        /* Блок с вопросами */
-        .questions {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .q-block {
-            margin-bottom: 20px;
-        }
-
-        .q-block h3 {
-            border-bottom: 2px solid #667eea;
+            font-size: 9px;
             color: #667eea;
-            padding-bottom: 5px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        /* Questions Side */
+        .questions-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+        }
+
+        .q-group h3 {
+            color: var(--primary);
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .q-item {
-            margin: 8px 0;
-            padding: 8px;
-            background: #f4f4f4;
-            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f7fafc;
+            border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
+            border-left: 4px solid transparent;
         }
 
         .q-item:hover {
-            background: #e0e7ff;
+            background: #edf2f7;
+            border-left-color: var(--primary);
             transform: translateX(5px);
         }
 
-        .btn-group {
+        /* Controls */
+        .controls {
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 20px;
+            margin-top: 30px;
         }
 
-        button {
-            padding: 10px 25px;
+        .btn {
+            padding: 12px 30px;
             border: none;
-            border-radius: 20px;
-            font-size: 16px;
-            cursor: pointer;
+            border-radius: 25px;
             font-weight: bold;
-            color: white;
+            cursor: pointer;
             transition: 0.3s;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .check { background: #2ecc71; }
-        .check:hover { background: #27ae60; }
-        
-        .reset { background: #e74c3c; }
-        .reset:hover { background: #c0392b; }
+        .btn-check { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .btn-check:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(56, 239, 125, 0.4); }
 
-        #message {
-            width: 100%;
+        .btn-clear { background: linear-gradient(135deg, #ff6b6b, #ee5a6f); }
+        .btn-clear:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(238, 90, 111, 0.4); }
+
+        #result-msg {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 1.2em;
+            min-height: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .game-area { flex-direction: column; align-items: center; }
+            .questions-panel { width: 100%; }
+            .cell { width: 32px; height: 32px; }
+            .cell input { font-size: 14px; }
         }
     </style>
 </head>
 <body>
 
+<header>
+    <h1>🏥 Медицинский Портал</h1>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('anatomy')">🧬 Анатомия</button>
+        <button class="tab-btn" onclick="switchTab('pharma')">💊 Фармакология</button>
+    </div>
+</header>
+
 <div class="container">
-    <h1>🧬 Анатомия</h1>
-
-    <!-- Сетка 6x6 -->
-    <div class="crossword-board" id="board"></div>
-
-    <div class="questions">
-        <div class="q-block">
-            <h3>По горизонтали:</h3>
-            <div class="q-item"><b>1.</b> Главный орган кровообращения (6)</div>
-            <div class="q-item"><b>4.</b> Орган дыхания (6)</div>
+    
+    <!-- АНАТОМИЯ -->
+    <div id="anatomy" class="crossword-section active">
+        <h2 style="text-align:center; margin-bottom:20px; color:#4a5568;">Кроссворд "Анатомия Человека"</h2>
+        <div class="game-area">
+            <div class="grid-wrapper">
+                <div class="cw-grid" id="grid-anatomy"></div>
+            </div>
+            <div class="questions-panel">
+                <div class="q-group">
+                    <h3>По горизонтали:</h3>
+                    <div class="q-item" onclick="focusWord('anat', 1)"><b>1.</b> Главный орган кровообращения (6)</div>
+                    <div class="q-item" onclick="focusWord('anat', 4)"><b>4.</b> Орган дыхания (6)</div>
+                </div>
+                <div class="q-group">
+                    <h3>По вертикали:</h3>
+                    <div class="q-item" onclick="focusWord('anat', 2)"><b>2.</b> Фильтр крови, парный орган (5)</div>
+                    <div class="q-item" onclick="focusWord('anat', 3)"><b>3.</b> Крупнейшая железа (6)</div>
+                </div>
+            </div>
         </div>
-        <div class="q-block">
-            <h3>По вертикали:</h3>
-            <div class="q-item"><b>2.</b> Фильтр крови, парный орган (5)</div>
-            <div class="q-item"><b>3.</b> Крупнейшая железа (6)</div>
+        <div class="controls">
+            <button class="btn btn-check" onclick="checkCrossword('anat')">Проверить</button>
+            <button class="btn btn-clear" onclick="clearCrossword('anat')">Очистить</button>
         </div>
+        <div id="result-anat" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
     </div>
 
-    <div class="btn-group">
-        <button class="check" onclick="check()">Проверить</button>
-        <button class="reset" onclick="reset()">Очистить</button>
+    <!-- ФАРМАКОЛОГИЯ -->
+    <div id="pharma" class="crossword-section">
+        <h2 style="text-align:center; margin-bottom:20px; color:#4a5568;">Кроссворд "Фармакология"</h2>
+        <div class="game-area">
+            <div class="grid-wrapper">
+                <div class="cw-grid" id="grid-pharma"></div>
+            </div>
+            <div class="questions-panel">
+                <div class="q-group">
+                    <h3>По горизонтали:</h3>
+                    <div class="q-item" onclick="focusWord('pharm', 1)"><b>1.</b> Вещество для лечения болезней (8)</div>
+                    <div class="q-item" onclick="focusWord('pharm', 3)"><b>3.</b> Нежелательное действие лекарства (8)</div>
+                </div>
+                <div class="q-group">
+                    <h3>По вертикали:</h3>
+                    <div class="q-item" onclick="focusWord('pharm', 2)"><b>2.</b> Наука о действии лекарств (12)</div>
+                    <div class="q-item" onclick="focusWord('pharm', 4)"><b>4.</b> Количество лекарства за прием (4)</div>
+                    <div class="q-item" onclick="focusWord('pharm', 5)"><b>5.</b> Лекарственная форма (8)</div>
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn btn-check" onclick="checkCrossword('pharm')">Проверить</button>
+            <button class="btn btn-clear" onclick="clearCrossword('pharm')">Очистить</button>
+        </div>
+        <div id="result-pharm" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
     </div>
-    <div id="message"></div>
+
 </div>
 
 <script>
-    // Схема кроссворда 6x6
-    // '.' - черная клетка
-    // Буква - белая клетка
-    // Цифра перед буквой - номер вопроса (например, "1С")
+    // --- ДАННЫЕ КРОССВОРДОВ ---
     
-    const schema = [
-        ['.', '3П', '.', '2К', '.', '.'], // Row 0
-        ['.', 'Е', '.', 'Р', '.', '.'],   // Row 1
-        ['1С', 'Е', 'Р', 'Д', 'Ц', 'Е'],  // Row 2 (СЕРДЦЕ)
-        ['4Л', 'Е', 'Г', 'К', 'О', 'Е'],  // Row 3 (ЛЕГКОЕ)
-        ['.', 'Н', '.', 'О', '.', '.'],   // Row 4
-        ['.', 'Ь', '.', 'В', '.', '.']    // Row 5
-    ];
+    // 1. АНАТОМИЯ (Сетка 6x6)
+    const anatomyData = {
+        size: 6,
+        words: [
+            { w: "СЕРДЦЕ", r: 2, c: 0, d: "across", n: 1 },
+            { w: "ЛЕГКОЕ", r: 3, c: 0, d: "across", n: 4 },
+            { w: "ПЕЧЕНЬ", r: 0, c: 1, d: "down", n: 3 },
+            { w: "КРОВЬ", r: 0, c: 3, d: "down", n: 2 } // Исправлено на 5 букв
+        ]
+    };
 
-    // Правильные ответы для проверки (без цифр)
-    const answers = [
-        ['.', 'П', '.', 'К', '.', '.'],
-        ['.', 'Е', '.', 'О', '.', '.'],
-        ['С', 'Е', 'Р', 'Д', 'Ц', 'Е'],
-        ['Л', 'Е', 'Г', 'К', 'О', 'Е'],
-        ['.', 'Н', '.', 'В', '.', '.'],
-        ['.', 'Ь', '.', 'Ь', '.', '.'] // Ой, КРОВЬ заканчивается на Ь, ПЕЧЕНЬ на Ь. 
-                                       // В схеме выше: ПЕЧЕНЬ (П-Е-Ч-Е-Н-Ь). КРОВЬ (К-Р-О-В-Ь).
-                                       // Исправим массив ответов ниже программно.
-    ];
+    // 2. ФАРМАКОЛОГИЯ (Сетка 12x12)
+    const pharmaData = {
+        size: 12,
+        words: [
+            { w: "ПРЕПАРАТ", r: 3, c: 2, d: "across", n: 1 },
+            { w: "ПОБОЧНЫЙ", r: 8, c: 1, d: "across", n: 3 },
+            { w: "ФАРМАКОЛОГИЯ", r: 0, c: 5, d: "down", n: 2 },
+            { w: "ДОЗА", r: 3, c: 9, d: "down", n: 4 },
+            { w: "ТАБЛЕТКА", r: 2, c: 11, d: "down", n: 5 }
+        ]
+    };
 
-    const board = document.getElementById('board');
+    // --- ГЕНЕРАЦИЯ СЕТКИ ---
+    function renderGrid(type, data) {
+        const container = document.getElementById(`grid-${type}`);
+        container.style.gridTemplateColumns = `repeat(${data.size}, 40px)`;
+        container.style.gridTemplateRows = `repeat(${data.size}, 40px)`;
+        container.innerHTML = '';
 
-    function init() {
-        board.innerHTML = '';
-        
-        for(let r=0; r<6; r++) {
-            for(let c=0; c<6; c++) {
-                let cellData = schema[r][c];
-                let div = document.createElement('div');
-                div.className = 'cell';
+        // Создаем пустую матрицу
+        let gridMap = Array(data.size).fill().map(() => Array(data.size).fill(null));
 
-                if(cellData === '.') {
-                    div.classList.add('black');
-                } else {
-                    // Если есть цифра (например "1С")
-                    let num = '';
-                    let char = cellData;
-                    
-                    if(/\d/.test(cellData.charAt(0))) {
-                        num = cellData.charAt(0);
-                        char = cellData.substring(1);
+        // Заполняем матрицу словами
+        data.words.forEach(word => {
+            for(let i=0; i<word.w.length; i++) {
+                let r = word.r + (word.d === 'down' ? i : 0);
+                let c = word.c + (word.d === 'across' ? i : 0);
+                if(r < data.size && c < data.size) {
+                    if(!gridMap[r][c]) gridMap[r][c] = { char: word.w[i], num: null };
+                    if(i === 0) gridMap[r][c].num = word.n;
+                }
+            }
+        });
+
+        // Рисуем HTML
+        for(let r=0; r<data.size; r++) {
+            for(let c=0; c<data.size; c++) {
+                const cellDiv = document.createElement('div');
+                cellDiv.className = 'cell';
+                
+                if(gridMap[r][c]) {
+                    if(gridMap[r][c].num) {
+                        const numSpan = document.createElement('span');
+                        numSpan.className = 'num';
+                        numSpan.innerText = gridMap[r][c].num;
+                        cellDiv.appendChild(numSpan);
                     }
-
-                    // Создаем инпут
-                    let input = document.createElement('input');
+                    const input = document.createElement('input');
                     input.maxLength = 1;
+                    input.dataset.ans = gridMap[r][c].char;
                     input.dataset.row = r;
                     input.dataset.col = c;
-                    input.dataset.ans = char; // Сохраняем правильный ответ
-                    
-                    // Добавляем номер
-                    if(num) {
-                        let span = document.createElement('span');
-                        span.className = 'num';
-                        span.innerText = num;
-                        div.appendChild(span);
-                    }
-                    
-                    div.appendChild(input);
+                    input.onkeyup = (e) => handleInput(e, r, c, data.size);
+                    cellDiv.appendChild(input);
+                } else {
+                    cellDiv.classList.add('black');
                 }
-                board.appendChild(div);
+                container.appendChild(cellDiv);
             }
         }
     }
 
-    function check() {
-        let inputs = document.querySelectorAll('input');
-        let correctCount = 0;
+    // --- ЛОГИКА ---
+    function handleInput(e, r, c, size) {
+        if(e.key.length === 1 && e.key.match(/[а-яА-Яa-zA-Z]/)) {
+            // Переход вперед (упрощенно вправо)
+            let next = document.querySelector(`input[data-row="${r}"][data-col="${c+1}"]`);
+            if(next) next.focus();
+        } else if (e.key === 'Backspace') {
+            // Переход назад
+            let prev = document.querySelector(`input[data-row="${r}"][data-col="${c-1}"]`);
+            if(prev) prev.focus();
+        }
+    }
+
+    function checkCrossword(type) {
+        const inputs = document.querySelectorAll(`#grid-${type} input`);
+        let correct = 0;
         let total = inputs.length;
-        let allCorrect = true;
+        let isFull = true;
 
         inputs.forEach(inp => {
-            let val = inp.value.toUpperCase();
-            let ans = inp.dataset.ans;
+            inp.classList.remove('correct', 'incorrect');
+            if(!inp.value) isFull = false;
             
-            // Сброс стилей
-            inp.style.backgroundColor = 'transparent';
-            inp.style.color = '#333';
-
-            if(val === ans) {
-                inp.style.backgroundColor = '#d4edda'; // Зеленый
-                inp.style.color = '#155724';
-                correctCount++;
-            } else if (val !== '') {
-                inp.style.backgroundColor = '#f8d7da'; // Красный
-                inp.style.color = '#721c24';
-                allCorrect = false;
-            } else {
-                allCorrect = false;
+            if(inp.value.toUpperCase() === inp.dataset.ans) {
+                inp.classList.add('correct');
+                correct++;
+            } else if (inp.value) {
+                inp.classList.add('incorrect');
             }
         });
 
-        let msg = document.getElementById('message');
-        if(correctCount === total) {
-            msg.innerText = "🎉 Отлично! Все верно!";
-            msg.style.color = "green";
+        const resDiv = document.getElementById(`result-${type}`);
+        if(correct === total) {
+            resDiv.innerHTML = "<span style='color:green'>🎉 Все верно! Вы эксперт!</span>";
         } else {
-            msg.innerText = `Правильно ${correctCount} из ${total}`;
-            msg.style.color = "red";
+            resDiv.innerHTML = `<span style='color:#e53e3e'>Правильно: ${correct} из ${total}</span>`;
         }
     }
 
-    function reset() {
-        document.querySelectorAll('input').forEach(inp => {
+    function clearCrossword(type) {
+        document.querySelectorAll(`#grid-${type} input`).forEach(inp => {
             inp.value = '';
-            inp.style.backgroundColor = 'transparent';
-            inp.style.color = '#333';
+            inp.classList.remove('correct', 'incorrect');
         });
-        document.getElementById('message').innerText = '';
+        document.getElementById(`result-${type}`).innerText = '';
     }
 
-    // Запуск
-    init();
+    function switchTab(tabId) {
+        document.querySelectorAll('.crossword-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function focusWord(type, num) {
+        // Простая реализация подсветки (можно усложнить)
+        alert(`Подсветка слова №${num} (функция в разработке)`);
+    }
+
+    // Инициализация при загрузке
+    window.onload = () => {
+        renderGrid('anat', anatomyData);
+        renderGrid('pharm', pharmaData);
+    };
 </script>
 
-</body>
-</html>
-
-    <a href="krossvordFa.html">кроссворд Фармакология</a>
-
-html_code = '''<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кроссворд - Фармакология</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
-            max-width: 1100px;
-            width: 100%;
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1 {
-            text-align: center;
-            color: #2d3748;
-            margin-bottom: 35px;
-            font-size: 2.5em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: none;
-            position: relative;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 2px;
-        }
-
-        .crossword-wrapper {
-            display: flex;
-            gap: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .grid-container {
-            position: relative;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .crossword-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 48px);
-            grid-template-rows: repeat(12, 48px);
-            gap: 3px;
-            background: #e2e8f0;
-            padding: 3px;
-            border-radius: 12px;
-        }
-
-        .cell-wrapper {
-            position: relative;
-            width: 48px;
-            height: 48px;
-        }
-
-        .cell {
-            width: 100%;
-            height: 100%;
-            background: white;
-            border: 2px solid #cbd5e0;
-            text-align: center;
-            font-size: 22px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
-            color: #2d3748;
-            border-radius: 6px;
-        }
-
-        .cell.blocked {
-            background: #4a5568;
-            border-color: #4a5568;
-            cursor: default;
-        }
-
-        .cell:not(.blocked):hover {
-            background: #e6fffa;
-            border-color: #667eea;
-            transform: scale(1.08);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            z-index: 10;
-        }
-
-        .cell.active {
-            background: #fef3c7;
-            border-color: #f59e0b;
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
-            transform: scale(1.05);
-        }
-
-        .cell.correct {
-            background: #d1fae5 !important;
-            border-color: #10b981 !important;
-            color: #065f46;
-            animation: correctPulse 0.5s ease;
-        }
-
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .cell.incorrect {
-            background: #fee2e2 !important;
-            border-color: #ef4444 !important;
-            color: #991b1b;
-            animation: shake 0.4s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .cell-number {
-            position: absolute;
-            top: 3px;
-            left: 4px;
-            font-size: 11px;
-            color: #667eea;
-            font-weight: 700;
-            pointer-events: none;
-            z-index: 5;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1px 3px;
-            border-radius: 3px;
-        }
-
-        .questions {
-            flex: 1;
-            min-width: 300px;
-            max-width: 400px;
-        }
-
-        .question-section {
-            margin-bottom: 30px;
-            animation: slideIn 0.6s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .question-section h3 {
-            color: #667eea;
-            margin-bottom: 18px;
-            font-size: 1.4em;
-            font-weight: 600;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .question-section h3::before {
-            content: '📝';
-            font-size: 1.2em;
-        }
-
-        .question-item {
-            margin-bottom: 14px;
-            padding: 15px;
-            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            border-left: 5px solid #667eea;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .question-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
-            transition: width 0.3s ease;
-        }
-
-        .question-item:hover::before {
-            width: 100%;
-        }
-
-        .question-item:hover {
-            background: linear-gradient(135deg, #e6fffa 0%, #d1fae5 100%);
-            transform: translateX(8px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-        }
-
-        .question-number {
-            font-weight: 700;
-            color: #667eea;
-            margin-right: 8px;
-            font-size: 1.1em;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 35px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 14px 35px;
-            font-size: 16px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        button:active::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .check-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .check-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-        }
-
-        .clear-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-        }
-
-        .clear-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
-        }
-
-        .result-message {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 1.3em;
-            font-weight: 600;
-            min-height: 35px;
-            padding: 15px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .success {
-            color: #065f46;
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            animation: successBounce 0.6s ease;
-        }
-
-        @keyframes successBounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .error {
-            color: #991b1b;
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-        }
-
-        .info {
-            color: #1e40af;
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 25px;
-            }
-
-            .crossword-grid {
-                grid-template-columns: repeat(12, 38px);
-                grid-template-rows: repeat(12, 38px);
-            }
-
-            .cell-wrapper {
-                width: 38px;
-                height: 38px;
-            }
-
-            .cell {
-                font-size: 18px;
-            }
-
-            .cell-number {
-                font-size: 9px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .crossword-wrapper {
-                gap: 25px;
-            }
-
-            .questions {
-                min-width: 100%;
-            }
-        }
-    </style>
-</head>
-<body>
-  <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кроссворд - Фармакология</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
-            max-width: 1100px;
-            width: 100%;
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1 {
-            text-align: center;
-            color: #2d3748;
-            margin-bottom: 35px;
-            font-size: 2.5em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border-radius: 2px;
-        }
-
-        .crossword-wrapper {
-            display: flex;
-            gap: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .grid-container {
-            position: relative;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .crossword-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 48px);
-            grid-template-rows: repeat(12, 48px);
-            gap: 3px;
-            background: #e2e8f0;
-            padding: 3px;
-            border-radius: 12px;
-        }
-
-        .cell-wrapper {
-            position: relative;
-            width: 48px;
-            height: 48px;
-        }
-
-        .cell {
-            width: 100%;
-            height: 100%;
-            background: white;
-            border: 2px solid #cbd5e0;
-            text-align: center;
-            font-size: 22px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            outline: none;
-            color: #2d3748;
-            border-radius: 6px;
-        }
-
-        .cell.blocked {
-            background: #4a5568;
-            border-color: #4a5568;
-            cursor: default;
-        }
-
-        .cell:not(.blocked):hover {
-            background: #e6fffa;
-            border-color: #11998e;
-            transform: scale(1.08);
-            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
-            z-index: 10;
-        }
-
-        .cell.active {
-            background: #fef3c7;
-            border-color: #f59e0b;
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
-            transform: scale(1.05);
-        }
-
-        .cell.correct {
-            background: #d1fae5 !important;
-            border-color: #10b981 !important;
-            color: #065f46;
-            animation: correctPulse 0.5s ease;
-        }
-
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .cell.incorrect {
-            background: #fee2e2 !important;
-            border-color: #ef4444 !important;
-            color: #991b1b;
-            animation: shake 0.4s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .cell-number {
-            position: absolute;
-            top: 3px;
-            left: 4px;
-            font-size: 11px;
-            color: #11998e;
-            font-weight: 700;
-            pointer-events: none;
-            z-index: 5;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1px 3px;
-            border-radius: 3px;
-        }
-
-        .questions {
-            flex: 1;
-            min-width: 300px;
-            max-width: 400px;
-        }
-
-        .question-section {
-            margin-bottom: 30px;
-            animation: slideIn 0.6s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .question-section h3 {
-            color: #11998e;
-            margin-bottom: 18px;
-            font-size: 1.4em;
-            font-weight: 600;
-            border-bottom: 3px solid #11998e;
-            padding-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .question-section h3::before {
-            content: '💊';
-            font-size: 1.2em;
-        }
-
-        .question-item {
-            margin-bottom: 14px;
-            padding: 15px;
-            background: linear-gradient(135deg, #f0f9f4 0%, #e6fffa 100%);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            border-left: 5px solid #11998e;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .question-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 100%;
-            background: linear-gradient(90deg, rgba(17, 153, 142, 0.1) 0%, transparent 100%);
-            transition: width 0.3s ease;
-        }
-
-        .question-item:hover::before {
-            width: 100%;
-        }
-
-        .question-item:hover {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            transform: translateX(8px);
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.2);
-        }
-
-        .question-number {
-            font-weight: 700;
-            color: #11998e;
-            margin-right: 8px;
-            font-size: 1.1em;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 35px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 14px 35px;
-            font-size: 16px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        button:active::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .check-btn {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
-        }
-
-        .check-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.5);
-        }
-
-        .clear-btn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(238, 90, 111, 0.4);
-        }
-
-        .clear-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(238, 90, 111, 0.5);
-        }
-
-        .result-message {
-            text-align: center;
-            margin-top: 25px;
-            font-size: 1.3em;
-            font-weight: 600;
-            min-height: 35px;
-            padding: 15px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .success {
-            color: #065f46;
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            animation: successBounce 0.6s ease;
-        }
-
-        @keyframes successBounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .error {
-            color: #991b1b;
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-        }
-
-        .info {
-            color: #1e40af;
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            margin-top: 20px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 4px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 25px;
-            }
-
-            .crossword-grid {
-                grid-template-columns: repeat(12, 38px);
-                grid-template-rows: repeat(12, 38px);
-            }
-
-            .cell-wrapper {
-                width: 38px;
-                height: 38px;
-            }
-
-            .cell {
-                font-size: 18px;
-            }
-
-            .cell-number {
-                font-size: 9px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .crossword-wrapper {
-                gap: 25px;
-            }
-
-            .questions {
-                min-width: 100%;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>💊 Кроссворд "Фармакология"</h1>
-        
-        <div class="crossword-wrapper">
-            <div class="grid-container">
-                <div class="crossword-grid" id="crosswordGrid"></div>
-            </div>
-            
-            <div class="questions">
-                <div class="question-section">
-                    <h3>По горизонтали:</h3>
-                    <div class="question-item" onclick="highlightWord(1)">
-                        <span class="question-number">1.</span> Вещество для лечения болезней (8 букв)
-                    </div>
-                    <div class="question-item" onclick="highlightWord(3)">
-                        <span class="question-number">3.</span> Нежелательное действие лекарства (8 букв)
-                    </div>
-                </div>
-                
-                <div class="question-section">
-                    <h3>По вертикали:</h3>
-                    <div class="question-item" onclick="highlightWord(2)">
-                        <span class="question-number">2.</span> Наука о действии лекарств (12 букв)
-                    </div>
-                    <div class="question-item" onclick="highlightWord(4)">
-                        <span class="question-number">4.</span> Количество лекарства за один прием (4 буквы)
-                    </div>
-                    <div class="question-item" onclick="highlightWord(5)">
-                        <span class="question-number">5.</span> Лекарственная форма в виде таблетки (8 букв)
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        
-        <div class="buttons">
-            <button class="check-btn" onclick="checkAnswers()">✓ Проверить ответы</button>
-            <button class="clear-btn" onclick="clearGrid()">↺ Очистить</button>
-        </div>
-        
-        <div class="result-message" id="resultMessage"></div>
-    </div>
-
-    <script>
-        // Определение слов и их позиций в сетке 12x12
-        const words = [
-            // По горизонтали
-            { word: 'ПРЕПАРАТ', direction: 'across', row: 3, col: 2, number: 1 },
-            { word: 'ПОБОЧНЫЙ', direction: 'across', row: 8, col: 1, number: 3 },
-            
-            // По вертикали
-            { word: 'ФАРМАКОЛОГИЯ', direction: 'down', row: 0, col: 5, number: 2 },
-            { word: 'ДОЗА', direction: 'down', row: 3, col: 9, number: 4 },
-            { word: 'ТАБЛЕТКА', direction: 'down', row: 2, col: 11, number: 5 }
-        ];
-
-        const gridSize = 12;
-        let grid = [];
-        let cellNumbers = {};
-        let wordCells = {};
-
-        // Инициализация сетки
-        function initGrid() {
-            grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(null));
-            cellNumbers = {};
-            wordCells = {};
-            
-            // Заполняем сетку словами
-            words.forEach(wordObj => {
-                const { word, direction, row, col, number } = wordObj;
-                wordCells[number] = [];
-                
-                for (let i = 0; i < word.length; i++) {
-                    let r = row;
-                    let c = col;
-                    
-                    if (direction === 'across') {
-                        c += i;
-                    } else {
-                        r += i;
-                    }
-                    
-                    if (r < gridSize && c < gridSize) {
-                        grid[r][c] = word[i];
-                        wordCells[number].push(`${r}-${c}`);
-                        
-                        // Добавляем номер только для первой буквы слова
-                        if (i === 0) {
-                            cellNumbers[`${r}-${c}`] = number;
-                        }
-                    }
-                }
-            });
-        }
-
-        // Создание HTML сетки
-        function createGrid() {
-            const gridElement = document.getElementById('crosswordGrid');
-            gridElement.innerHTML = '';
-            
-            for (let row = 0; row < gridSize; row++) {
-                for (let col = 0; col < gridSize; col++) {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'cell-wrapper';
-                    
-                    const cell = document.createElement('input');
-                    cell.type = 'text';
-                    cell.className = 'cell';
-                    cell.maxLength = 1;
-                    cell.dataset.row = row;
-                    cell.dataset.col = col;
-                    
-                    if (grid[row][col]) {
-                        cell.addEventListener('input', handleInput);
-                        cell.addEventListener('keydown', handleKeydown);
-                        cell.addEventListener('focus', () => highlightCell(cell));
-                        
-                        // Добавляем номер вопроса если есть
-                        if (cellNumbers[`${row}-${col}`]) {
-                            const numberSpan = document.createElement('span');
-                            numberSpan.className = 'cell-number';
-                            numberSpan.textContent = cellNumbers[`${row}-${col}`];
-                            wrapper.appendChild(numberSpan);
-                        }
-                    } else {
-                        cell.classList.add('blocked');
-                        cell.disabled = true;
-                    }
-                    
-                    wrapper.appendChild(cell);
-                    gridElement.appendChild(wrapper);
-                }
-            }
-        }
-
-        // Обработка ввода
-        function handleInput(e) {
-            const cell = e.target;
-            const value = cell.value.toUpperCase();
-            cell.value = value;
-            
-            updateProgress();
-            
-            // Автоматический переход к следующей клетке
-            if (value) {
-                moveToNextCell(cell);
-            }
-        }
-
-        // Обработка клавиш
-        function handleKeydown(e) {
-            const cell = e.target;
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.col);
-            
-            switch(e.key) {
-                case 'ArrowRight':
-                    e.preventDefault();
-                    moveFocus(row, col + 1);
-                    break;
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    moveFocus(row, col - 1);
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    moveFocus(row + 1, col);
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    moveFocus(row - 1, col);
-                    break;
-                case 'Backspace':
-                    if (!cell.value) {
-                        moveToPreviousCell(cell);
-                    }
-                    break;
-            }
-        }
-
-        // Перемещение фокуса
-        function moveFocus(row, col) {
-            if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
-                const nextCell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                if (nextCell && !nextCell.classList.contains('blocked')) {
-                    nextCell.focus();
-                }
-            }
-        }
-
-        // Переход к следующей клетке
-        function moveToNextCell(currentCell) {
-            const row = parseInt(currentCell.dataset.row);
-            const col = parseInt(currentCell.dataset.col);
-            
-            // Пробуем двигаться по горизонтали сначала
-            moveFocus(row, col + 1);
-        }
-
-        // Переход к предыдущей клетке
-        function moveToPreviousCell(currentCell) {
-            const row = parseInt(currentCell.dataset.row);
-            const col = parseInt(currentCell.dataset.col);
-            
-            moveFocus(row, col - 1);
-        }
-
-        // Подсветка активной клетки
-        function highlightCell(cell) {
-            document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
-            cell.classList.add('active');
-        }
-
-        // Подсветка слова при клике на вопрос
-        function highlightWord(number) {
-            document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
-            
-            if (wordCells[number]) {
-                wordCells[number].forEach(pos => {
-                    const [row, col] = pos.split('-');
-                    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    if (cell) {
-                        cell.classList.add('active');
-                    }
-                });
-                
-                // Фокус на первую букву
-                const firstPos = wordCells[number][0];
-                const [row, col] = firstPos.split('-');
-                const firstCell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                if (firstCell) {
-                    firstCell.focus();
-                }
-            }
-        }
-
-        // Обновление прогресса
-        function updateProgress() {
-            const totalCells = document.querySelectorAll('.cell:not(.blocked)').length;
-            const filledCells = document.querySelectorAll('.cell:not(.blocked):not([value=""])').length;
-            const percentage = (filledCells / totalCells) * 100;
-            
-            document.getElementById('progressFill').style.width = percentage + '%';
-        }
-
-        // Проверка ответов
-        function checkAnswers() {
-            let correct = 0;
-            let total = 0;
-            
-            document.querySelectorAll('.cell:not(.blocked)').forEach(cell => {
-                const row = parseInt(cell.dataset.row);
-                const col = parseInt(cell.dataset.col);
-                const userAnswer = cell.value.toUpperCase();
-                const correctAnswer = grid[row][col];
-                
-                cell.classList.remove('correct', 'incorrect');
-                
-                if (userAnswer) {
-                    total++;
-                    if (userAnswer === correctAnswer) {
-                        cell.classList.add('correct');
-                        correct++;
-                    } else {
-                        cell.classList.add('incorrect');
-                    }
-                }
-            });
-            
-            const resultMessage = document.getElementById('resultMessage');
-            if (total === 0) {
-                resultMessage.textContent = '⚠️ Введите хотя бы одну букву!';
-                resultMessage.className = 'result-message info';
-            } else if (correct === total && total > 0) {
-                resultMessage.textContent = `🎉 Отлично! Все ${correct} ответов правильные! Вы настоящий эксперт!`;
-                resultMessage.className = 'result-message success';
-                celebrateSuccess();
-            } else {
-                const percentage = Math.round((correct / total) * 100);
-                resultMessage.textContent = `✓ Правильно: ${correct} из ${total} (${percentage}%)`;
-                resultMessage.className = 'result-message error';
-            }
-        }
-
-        // Эффект празднования успеха
-        function celebrateSuccess() {
-            const colors = ['#11998e', '#38ef7d', '#f093fb', '#f5576c', '#10b981'];
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    createConfetti(colors[Math.floor(Math.random() * colors.length)]);
-                }, i * 30);
-            }
-        }
-
-        // Создание конфетти
-        function createConfetti(color) {
-            const confetti = document.createElement('div');
-            confetti.style.position = 'fixed';
-            confetti.style.width = '10px';
-            confetti.style.height = '10px';
-            confetti.style.backgroundColor = color;
-            confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.top = '-10px';
-            confetti.style.borderRadius = '50%';
-            confetti.style.pointerEvents = 'none';
-            confetti.style.zIndex = '9999';
-            document.body.appendChild(confetti);
-            
-            const animation = confetti.animate([
-                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
-                { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-            ], {
-                duration: 2000 + Math.random() * 1000,
-                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-            });
-            
-            animation.onfinish = () => confetti.remove();
-        }
-
-        // Очистка сетки
-        function clearGrid() {
-            document.querySelectorAll('.cell:not(.blocked)').forEach(cell => {
-                cell.value = '';
-                cell.classList.remove('correct', 'incorrect', 'active');
-            });
-            document.getElementById('resultMessage').textContent = '';
-            document.getElementById('progressFill').style.width = '0%';
-        }
-
-        // Инициализация при загрузке
-        window.onload = function() {
-            initGrid();
-            createGrid();
-            updateProgress();
-        };
-    </script>
 </body>
 </html>
